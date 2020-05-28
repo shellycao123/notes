@@ -5,7 +5,7 @@
   - [3.1. MapReduce:](#31-mapreduce)
     - [3.1.1. Overview](#311-overview)
     - [Typical setup:](#typical-setup)
-    - [In and Output:](#in-and-output)
+    - [Components:](#components)
   - [3.2. HDFS](#32-hdfs)
     - [3.2.1. Overview: Master/Slave model](#321-overview-masterslave-model)
     - [3.2.2. Data Organization & Replication:](#322-data-organization--replication)
@@ -17,6 +17,12 @@
     - [3.2.8. Data rebalancing:](#328-data-rebalancing)
     - [3.2.9. File System Permission:](#329-file-system-permission)
     - [3.2.10. 3.2.10. Other related features:](#3210-3210-other-related-features)
+  - [Hadoop YARN](#hadoop-yarn)
+    - [Architecture](#architecture)
+    - [Special functionalities:](#special-functionalities)
+  - [Hadoop Commons:](#hadoop-commons)
+  - [Hadoop Ozone:](#hadoop-ozone)
+    - [Characteristics:](#characteristics)
 - [4. Pig](#4-pig)
 - [5. Hive](#5-hive)
 - [6. Spark](#6-spark)
@@ -37,13 +43,21 @@ This page is dedicated to all study notes concerning Batch Data Processing
 ## 3.1. [MapReduce](https://hadoop.apache.org/docs/r1.2.1/mapred_tutorial.html): 
 ### 3.1.1. Overview
   * __Job Tracker__: master node, scheduling the jobs' component tasks on the slaves, monitoring them and re-executing the failed tasks
-  * __Task Tracker__: slaves, execute the tasks as directed by the master
+  * __Task Tracker__: slaves, execute the tasks as directed by the master in a separate JVM as a child process. 
 ### Typical setup: 
   1. Storage node and computing node are the same to increase aggregate bandwidth. aka Node runs HDFS and MapReduce. 
   2. Both in and output are stored in file system, not in memory. 
-### In and Output:
-  For all tasks (map, combine, reduce) need to be Key-Value pairs. 
-
+### Components: 
+  * __Mapper__: maps input key/value pairs to a set of intermediate key/value pairs. 
+  * __Reducer__: reduces a set of intermediate values which share a key to a smaller set of values. Can be __NONE__. Stages: 
+     1. Shuffle:  the framework fetches the relevant output of all the mappers, via HTTP.  
+     2. Sort: Framework groups Mapper outputs by keys. Occur simutaneously with Shuffle. 
+     3. Secondary Sort (optional): Can be used to sort the output of Mappers by values. Can sort in reducer or create composite key from natural key + value and sort by framework. 
+     4. Reduce: reduce the sorted input and write the result to FS.  
+ * __Partitioner__: control the partitioning of mapper outputs. # of partitions is the same as number of reduce tasks. 
+ * __Reporter__: report progress, set application-level status messages and update Counters. Can be implemented in Mapper and Reducer. 
+ * __Output Collector__: collect the output of mapper and reducer. 
+ * __Job Configration__
 ## 3.2. [HDFS](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html)
 ### 3.2.1. Overview: Master/Slave model
   * __NameNode__: master node, a single one in a cluster. 
@@ -104,6 +118,28 @@ This page is dedicated to all study notes concerning Batch Data Processing
    * __Space Quota__:  hard limit on the number of bytes used by files in the tree rooted at that directory. Replica counts
   5. Support __Offline Image Viewer__, dump the contents of hdfs fsimage files to human-readable formats for offline analysis.
   6. Support __HFTP__ for reading from a remote Hadoop cluster, use HTTPS.   
+##  Hadoop YARN
+  Separate resource management from scheduling & monitoring by using different daemons. 
+### Architecture
+  *  __Resource Manager__: global in the system, manage all resources in the system. 
+     *  __Scheduler__:allocate resource to running applications. Perform no monitoring or status tracking. Partition policy is pluggable. 
+     *  __Application Manager__: accepting job-submissions, negotiating the first container for executing the application specific Application Master and restartg the Application Master container on failure. 
+  *  __Application Master__: per application, negotiating resources with scheduler and working with the NodeManager(s) to execute and monitor the tasks. Also track resource status and monitor for progress. 
+  *  __Node Manager__: per machine, responsible for containers, monitoring their resource usage (cpu, memory, disk, network) and reporting to RM.
+### Special functionalities: 
+  1. __Resource reservation__: reserve resource for predictable execution. 
+  2. __Federation__: transparently wire together multiple YARN clusters. 
+   
+## Hadoop Commons: 
+  common utilites to support other modules
+## Hadoop Ozone: 
+  Dsitributed key-value store, support both large and small file management (HDFS is limited when files are small). Relatively new, more reading in the future if necessary. 
+  ### Characteristics:
+    1. Support strict serializability.
+      * Serializability: Result of interleaving is equivalent to sequential execution of transactions. 
+      * Strict Serializability: if transaction A terminates before the start of B, then A must appear before B in the serialized order. 
+    2. Support layered architecture, it separates the namespace management from block and node management layer, allowing users to independently scale on both axes.
+   
 
 
   
