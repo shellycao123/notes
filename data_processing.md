@@ -136,8 +136,8 @@ This page is dedicated to all study notes concerning Batch Data Processing
   Dsitributed key-value store, support both large and small file management (HDFS is limited when files are small). Relatively new, more reading in the future if necessary. 
   ### Characteristics:
     1. Support strict serializability.
-      * Serializability: Result of interleaving is equivalent to sequential execution of transactions. 
-      * Strict Serializability: if transaction A terminates before the start of B, then A must appear before B in the serialized order. 
+  * Serializability: Result of interleaving is equivalent to sequential execution of transactions. 
+    * Strict Serializability: if transaction A terminates before the start of B, then A must appear before B in the serialized order. 
     2. Support layered architecture, it separates the namespace management from block and node management layer, allowing users to independently scale on both axes.
    
 
