@@ -74,6 +74,10 @@ Can be used to reduce linear time to O(logN).
 2. If change the matrix while looping might cause problem, can record the col/row that needs to be changed in sets. wait until the first round of looping ends, then start changing the matrix. 
    * can improve memory furthur by checking the first column and row, record their status, then use them as the record placer for the remainder of the matrix. 
    * [Lintcode 162 Set Matrix Zeros](https://www.lintcode.com/problem/set-matrix-zeroes/)
+3. For row && col sorted matrix, do not limit thoughts to using binary search on each row/col. Sometimes not using binary search & simply moving in the matrix has better performance. 
+   * To reach runtime O(m+n), with m is the length and n is the height of the matrix, every loop need to eliminate one row /one col. 
+   * Less than, equal to, larger than current element means moving to 3 different diretions in the matrix. Key is to find the beginning position where there are 3 paths that satisfy the three different situations. `the corner of the matrix`.
+   * [Lintcode 38 search 2D matrix II](https://www.lintcode.com/problem/search-a-2d-matrix-ii)
 
 ## Recursion
 1. To avoid using recursion, consider using stack to mimize the recursion process. 
