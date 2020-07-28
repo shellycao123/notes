@@ -4,6 +4,9 @@
 1. The range of any number appeared in the question, does it require long/int?
 2. Can array be empty?
 3. If given a range, can the lower bound be larger than the upper bound? 
+4. Ask whether the input will always be not null && valid? 
+5. Involving the product/sum of many int, ask whether the result will overflow to long?
+6. Involving product, whether the inputs can be negative? (Thus two negaative int will get positive result and change the algo)
 
 ## General
 1. When initializing min/max values, what value should be picked to be the default? Integer.MAX_VALUE/MIN_VALUE or use 0? 
@@ -17,6 +20,9 @@
    * [Lintcode 65 Find the median of two sorted arrays](https://www.lintcode.com/problem/median-of-two-sorted-arrays)
 7. Think about how to transform questions into solution-known, easier questions.
    * [Insert interval](https://www.lintcode.com/problem/insert-interval) is the same as [Merge Interval]() if you insert the interval without considering the merge.  
+8. What does a well-formed string generated from parenthesis mean? For each substring [0, i), i <= length, number of left parenthesis >= right parenthesis. 
+   * [Generate Parenthesis](https://www.lintcode.com/problem/generate-parentheses)
+9. Pay attention to the description language used. kth Largest element in an array is different from kth element in an array. 
 
 ## Data Structure
 ### Arrays
@@ -52,6 +58,7 @@
 3. Implement iterator with stack, need to maintain a next variable for the iterator. 
 4. Stack can be used to keep track of the current status as far as the insertion of current element. When deleting, pop from the status stack.
 5. When need to find the **next larger/smaller element**, the first thing to consider is to use monotonic stack. 
+6. 嵌套类问题，alway push each element to the stack, then keeps popping from the stack. 
 
 ### Heap
 1. When using two heaps to keep track of the median of numbers, pay attention to the balance condition. If want to peek from the bottom heap when retrieving the median, set the balance condition to bottom.size() >= top.size(), aka the condition in while loop should be (bottom.size > top.size() + 1) && (top.size() > bottom.size())
@@ -61,30 +68,59 @@
 
 ### Trie
 1. A single node does not represent any character. Instead, its position in its parent's chidren array represent the character. If a character exists, then the corresponding position in current root's chidren array is not null. 
+
+
+## Algorithms
+### Dynamic Programming
+   #### General Questions
+   1. Pay attention to the border condition. Deal with them as special cases at the beginning of the function.
+   2. Pay attention to what is the smaller problem to be solved. Sometimes it is not necessarily what has been executed, but can be what has not been executed.  
+   
+   #### Gaming/ 0 sum game
+   1. Assume each step, both the opponent and the player will take the optimum strategy. 
+   2. Think of what the remaining situation will be like after taking current step. The smaller problem to be solved is the remaining situation, what has not happened. 
+      * Both players are equivalent, who has the upper hand at each step during the DP does not matter.
+      * [Lintcode 395 Coins in a line II](https://www.lintcode.com/problem/coins-in-a-line-ii)
+  
+   #### Backpack problems
+   In this type of question, our result is limited to a upper/lower boundary. DP on the size of the backpack and the length of what needs to be put inside the backpack. 
+   1. remember to set the dp matrix size to backpack size + 1, so that the situation of size == 0 can be represented in the dp matrix. If dp matrix indices are used to traverse input array only, no need to set its size to length + 1.
+   
+   ### Interval dependent
+   In this type of question, the result of larger interval depends on the results of smaller intervals. DP on all possible sub intervals.
+   * Pay attention about the boundarys & whether to split into one empty interval and a full-length interval 
+   * Pay attention to in which direction the DP should move
+   * (Lintcode stone game)[https://www.lintcode.com/problem/stone-game/]
+  
+   ### Decode questions
+   1. When decoding from the need to consider all the situations. What are the illegal cases, when two digits can be converted to one letter? When only one digit can be converted to letter? 
+   *  (Lintcode Decode ways)[https://www.lintcode.com/problem/decode-ways]
 ### Binary Search
 Can be used to reduce linear time to O(logN).
 1. When changing left/ right index, cannot set it directly to mid, need to be mid + 1/ mid - 1 for the loop to make progress. 
 2. Can be used for search beyond finding the exact value. Essentially, everytime doing binary search is dividing a bigger problem into two smaller problems. Thought process is similar to recursion. 
    * [Lintcode 75 Finding peak element](https://www.lintcode.com/problem/find-peak-element/description)
 3. Knowing the range of result, can also do binary search on the range to find the exact result. 
+   * [Lintcode 437 copy books](https://www.lintcode.com/problem/copy-books)
 4. Find Kth can do binary search on the range of all possible values. In every round, check if the mid of the range fulfills the return requirement, then move left & right correspondingly 
    * [Leetcode find kth smallest pair distance](https://leetcode.com/problems/find-k-th-smallest-pair-distance/discuss/109075/Java-solution-Binary-Search)
 5. If the element is not present in the array, binary search always merges to the largest element that is smaller than the target value 
-
-## Algorithms
-### Dynamic Programming
-   ### General Questions
-   1. Pay attention to the border condition. Deal with them as special cases at the beginning of the function.
-   2. Pay attention to what is the smaller problem to be solved. Sometimes it is not necessarily what has been executed, but can be what has not been executed.  
-   
-   ### Gaming/ 0 sum game
-   1. Assume each step, both the opponent and the player will take the optimum strategy. 
-   2. Think of what the remaining situation will be like after taking current step. The smaller problem to be solved is the remaining situation, what has not happened. 
-      * Both players are equivalent, who has the upper hand at each step during the DP does not matter.
-      * [Lintcode 395 Coins in a line II](https://www.lintcode.com/problem/coins-in-a-line-ii)
-  
-   ### Backpack problems
-   1. remember to set the dp matrix size to backpack size + 1, so that the situation of size == 0 can be represented in the dp matrix. If dp matrix indices are used to traverse input array only, no need to set its size to length + 1.
+* General Binary seach template(both when the exact value exists or not) 
+  ```
+   while (left < right){
+      mid = (left + right) / 2;
+      if(mid == target){
+         return mid;
+      }
+      if(mid > target){
+         right = mid - 1;
+      }
+      else{
+         left = mid + 1;
+      }
+      return Math.min(left, right); //depends on what you want to return when the exact value is not found, can return min or max of (left,right)
+  }
+  ```
 
 
 ### Matrix
@@ -103,14 +139,24 @@ Can be used to reduce linear time to O(logN).
    * Less than, equal to, larger than current element means moving to 3 different diretions in the matrix. Key is to find the beginning position where there are 3 paths that satisfy the three different situations. **the corner of the matrix**.
    * [Lintcode 38 search 2D matrix II](https://www.lintcode.com/problem/search-a-2d-matrix-ii)
 4. To traverse the four neighbors of an element, can use displacement vector dx= {-1,1,0,0}, dy={0,0,1,-1}
+5. The size of the max square with a point as its bottom-right corner can be calculcated from the upper, left, upper-left point.
+   * [Lintcode 436](https://www.lintcode.com/problem/maximal-square)
 
 ### Recursion
 1. To avoid using recursion, consider using stack to mimize the recursion process. 
 2. Think about what the smaller problem is like. Similar thought process as using DP.
 
 ### DFS/BFS
-1. When using stack to do DFS, pay attention not to add the right children multiple times. Use HashSet to check if a node has been added, or design the traversal to avoid multiple addition. 
-   * [Kth smallest element in BST](https://www.lintcode.com/problem/kth-smallest-element-in-a-bst/)
+   #### When to use DFS/ BFS? 
+   1. When need to find the min/max depth, use BFS.
+   2. When need to find all the pathes to the deepest level, use DFS.
+   3. If need to find the pathes with min/max depth, use BFS to find the depth & remember the possible parents/children first, then use DFS to find the exact path. 
+   * If need to find the min/max path from a specific leaf to the root, can record the parent of all nodes during BFS, then use DFS from the leaf to find the path. 
+   #### DFS
+   1. When using stack to do DFS to avoid recursion, pay attention not to add the right children multiple times. Use HashSet to check if a node has been added, or design the traversal to avoid multiple addition. 
+      * [Kth smallest element in BST](https://www.lintcode.com/problem/kth-smallest-element-in-a-bst/)
+   #### BFS
+   1. Use Deque for BFS, HashMap to remember the path. 
 
 ### Sorting
 1. Patience sorting: essentially divide the array into multiple sorted piles, then merge all piles. 
@@ -120,5 +166,35 @@ Can be used to reduce linear time to O(logN).
    * Top of the piles are alyaws sorted from left to right. 
    * Famously used to reduce the runtime of finding the longest increasing subsequence. 
    * [Leetcode 300. Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/)
+     * In this question, eahc pile represents all the cards that are equivalent to using the top of the pile while forming the LIS. Thus each pile should be decreasing from top to bottom. Also therefore the number of piles is the length of LIS. 
+2. Quicksort template
+   ```
+      int start = l;
+      int end = r; 
+      int p_i = getPivot(nums, l , r); 
+      swap(p_i, r, nums);
+      int pivot = nums[r];
+      while(l < r){
+         while(l < r && nums[l] <= pivot){
+               l++;
+         }
+         nums[r] = nums[l]; 
+         while(l < r && nums[r] > pivot){
+               r--;
+         }
+         nums[l] = nums[r]; 
+      }
+      nums[l] = pivot;
+      recSort(start, l - 1);
+      recSort(l + 1, end);
+      
+   ```
+   3. bucket sort: pay attention to avoid 0 bucket size, avoid max == min situation, how to decide bucket count(remember to + 1)
+
+## Special mathemtical property related
+1. Permumation: the smallest permutation is increasing array, largest is decreasing array. 
+   * (Lintcode find next permutation)[https://www.lintcode.com/problem/next-permutation/]
+   *  Find all permutations without recursion: use DP thinking method. find the permutation of array [0, i), insert the ith element to all the previous permutations. 
+ 
 
   
