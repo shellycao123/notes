@@ -5,8 +5,10 @@
 2. Can array be empty?
 3. If given a range, can the lower bound be larger than the upper bound? 
 4. Ask whether the input will always be not null && valid? 
-5. Involving the product/sum of many int, ask whether the result will overflow to long?
+5. Involving the product/sum of many int, ask whether the result will overflow?
 6. Involving product, whether the inputs can be negative? (Thus two negaative int will get positive result and change the algo)
+7. When converting Math.abs(Integer.MIN_VALUE), will result in overflow. 
+8. Asking whether values in a set can have duplicates. 
 
 ## General
 1. When initializing min/max values, what value should be picked to be the default? Integer.MAX_VALUE/MIN_VALUE or use 0? 
@@ -41,6 +43,7 @@
 5. When want to group elements by ranges of value, think of using **bucket**; when want elements within certain radius in the array, think of using sliding **window**. 
 6. Circular array, loop the non-circular array twice will be able to cover all elements.
    * [Leetcode 503](https://leetcode.com/problems/next-greater-element-ii/)
+7. When need to amerge two arrays in place && knowing the size of the final array, considering starting from the end of the final array 
 
 ### Hashing
 1. When storing the value directly cannot reduce the time complexity, think about storing other related values (mod value, frequency etc. )
@@ -65,9 +68,22 @@
 
 ### Tree
 1. Tree is essentially a linked list tree. Can change the right pointer to point to the next node for O(1) retrieval of the next node. Can be used to implement O(1) iterator. 
+2. Morris Traversal: transform a binary tree to a linkedlist, then traverse the linkedlist for the inorder traversal of the tree. O(1) space traversal. 
+3. Deque can be used to traverse binary tree iteratively. 
+  - BFS traversal: Need to remember the size of current level nodes, and add their children to the deque.
+  - DFS traversal: use stack
+4. Preorder vs Inorder vs Postorder
+   - first element of preorder traversal is the root of the tree
+   - last element of postoder traversal is the root of the tree. 
+   - root split inorder list into left side sublist and right side sublist
 
 ### Trie
 1. A single node does not represent any character. Instead, its position in its parent's chidren array represent the character. If a character exists, then the corresponding position in current root's chidren array is not null. 
+
+### LinkedList
+1. When deleting from the list, always think about whether the head might be deleted and need to return the next node of deleted node.
+2. When accessing node.next, always check whether node is null. 
+3. When the head of a list might change due to delete, can use recursion to deal with the chain in segments and return the head of each segment. Can also add a dummy node to the beginning of the list if applicable to the questions. 
 
 
 ## Algorithms
@@ -103,8 +119,9 @@ Can be used to reduce linear time to O(logN).
 3. Knowing the range of result, can also do binary search on the range to find the exact result. 
    * [Lintcode 437 copy books](https://www.lintcode.com/problem/copy-books)
 4. Find Kth can do binary search on the range of all possible values. In every round, check if the mid of the range fulfills the return requirement, then move left & right correspondingly 
+5. Binary search algo remains unchanged when there're repeats in the array. 
    * [Leetcode find kth smallest pair distance](https://leetcode.com/problems/find-k-th-smallest-pair-distance/discuss/109075/Java-solution-Binary-Search)
-5. If the element is not present in the array, binary search always merges to the largest element that is smaller than the target value 
+6. If the element is not present in the array, binary search always merges to the largest element that is smaller than the target value 
 * General Binary seach template(both when the exact value exists or not) 
   ```
    while (left < right){
@@ -143,8 +160,9 @@ Can be used to reduce linear time to O(logN).
    * [Lintcode 436](https://www.lintcode.com/problem/maximal-square)
 
 ### Recursion
-1. To avoid using recursion, consider using stack to mimize the recursion process. 
+1. To avoid using recursion, consider using stack or deque to mimize the recursion process. 
 2. Think about what the smaller problem is like. Similar thought process as using DP.
+3. When need to pass on both int and boolean in recursion, think about use -1 or any special value to represent false
 
 ### DFS/BFS
    #### When to use DFS/ BFS? 
@@ -189,12 +207,14 @@ Can be used to reduce linear time to O(logN).
       recSort(l + 1, end);
       
    ```
+   Quicksort's average runtime to find the kth element is O(n). 
    3. bucket sort: pay attention to avoid 0 bucket size, avoid max == min situation, how to decide bucket count(remember to + 1)
 
 ## Special mathemtical property related
 1. Permumation: the smallest permutation is increasing array, largest is decreasing array. 
    * (Lintcode find next permutation)[https://www.lintcode.com/problem/next-permutation/]
    *  Find all permutations without recursion: use DP thinking method. find the permutation of array [0, i), insert the ith element to all the previous permutations. 
+2. Combination: To find unique combination of a set, set the max/min value unchanged, reduce its value from the target, then recursively find the remaining target without using the max/min element. 
  
 
   
