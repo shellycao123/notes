@@ -1,7 +1,7 @@
 # Note from Processing Big Data Fall 20
 - [Note from Processing Big Data Fall 20](#note-from-processing-big-data-fall-20)
   - [Lesson 4](#lesson-4)
-  - [Lesson 5](#lesson-5)
+  - [HDFS](#hdfs)
   - [Lesson 6](#lesson-6)
   - [Lesson 8](#lesson-8)
   - [Distributed File System](#distributed-file-system)
@@ -20,17 +20,19 @@
   - [zookeeper](#zookeeper)
   - [MapReduce 1](#mapreduce-1)
   - [MapReduce 2](#mapreduce-2)
-  - [YARN](#yarn)
 ## Lesson 4
 1. Kilobyte -> Megabyte -> Gigabyte -> Terabyte -> Petabyte ->Exabyte -> Zettabyte -> Yottabyte
 2. Active archive: store all the raw data. Before Hadoop, need to send raw data to offsite archive for long term storage. Now all raw data are available on demand. 
 3. Big data: the size of data becomes part of the problem. Traditional methods of working with data stops working. 
 4. prefer collection of multiple hard drives for parallel reading. 
 
-## Lesson 5 
+## HDFS
 1. HDFS: block 128 mb, stored on datanodes. 
    - namenode is the master node. Can have standby namenodes for high availability. 
    - datanode: actual storage
+   - can process any type of data( structures, semi structured, unstructured)
+   - can't have multiple writers at the same time. 
+   - no random seek/write
 
 ## Lesson 6
 1. Speculative Excetution: resolve hanging tasks. 
@@ -92,6 +94,7 @@
    - column based:
    - graph
    - document
+
 ## HBase: 
 1. built on HDFS, similar to Google's bigtable. 
 2. column oriented
@@ -191,7 +194,7 @@
 1. streaming input -> processing -> output
 2. challenges: unbounded memory limit, horizontal scaling, lookbacks, optimization. 
 3. real time processing, marshalling in real time, making decision where to direct the output based on real time analytics, threshold checked and alerts generated, leaderboard maintained in real time. prediction. 
-4. using streaming context. new API based on data set and data frames, not micro-batch set RDD. Dstream, infacct continuous RDDs
+4. using streaming context. new API based on data set and data frames, not micro-batch set RDD. Dstream, infact continuous RDDs
 5. transformations & output operations. 
 
 
@@ -207,14 +210,26 @@
 9. atomic data access
 
 ## MapReduce 1
+1. Job tracker: resource manager + app master, single point of failure. be notified of task failure through tasktracker heartbeat message, reschedules the task
+2. task tracker: == node manager
+3. runtime failre: task failure(reschedule task), task tracker failure(if job not complete, all completed tasks are rerun. all in progress tasks are rescheduled), job tracker failure(resubmit the job)
 
 ## MapReduce 2
 1. difference in YARN & application master
 2. job tracker was a single point of failure & can't be scaled, now is broken down into resource manager and appliation master.New application master for each new job, run on worker node, launched by resource manager. 
-
-## YARN
-1. can run workflows other than MapReduce since MapReduce2.0
-2. resource manager: 
-3. application master: request resources from resource manager, then works with containers provided by node manager. not run as a trusted service. manages the application life cycle, faults, provided metrics to Resource Manager. send heartbeat to master node. 
-4. node manager: takes instructions from the application amanger, provide containers(JVM) to application manager. manages the containers, gives container leases to app 
+3. job submission:
+   - submit() creates new JobSubmitter, get new app ID from RM, compute input split,calls, submitJob() on RM
+   - errors: no output dir, no input dir, output dir exists
+4. In task assignment, AM can decide to uberize the tasks(run tasks serial in AM's JVM) since the tasks are too small and parallelization overhead is too big. requests for mapper containers, after 5% of mappers done, request reducer containers.  
+5. failures:
+   - task failure: AM resschedules task
+   - app master failure: already run job don't need to be rerun. 
+   - node manager failure: AM & tasks run on the manager is recovered. completed task on the node manager rerun( the datanode it manages ight also have failed), any in-progress reschedule
+   - resource manager: HA mode of YARN.
+6. YARN: resource management in hadoop 2, separate processing from resource management.
+   1. can run workflows other than MapReduce
+   2. resource manager: 
+   3. application master: request resources from resource manager, then works with containers provided by node manager. not run as a trusted service. manages the application life cycle, faults, provided metrics to Resource Manager. send heartbeat to RM. 
+   4. node manager: takes instructions from the application amanger, provide containers(JVM) to application manager. manages the containers, gives container leases to app. send heartbea to RM
+   5.  can run resource manager in HA(high availability mode)
    
