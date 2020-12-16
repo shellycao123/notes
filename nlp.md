@@ -146,8 +146,101 @@
       2. determine the distribution of phrases. 
       3. determine the agreement properties of phrases (singular/plural, gender)
 7. Argument sharing properties of Lexicon: connected by the phrase. 
-   - raising: former is the subject/object of latter
+   - raising: former is the subject/object of latter. is likely to 
    - control: former is subject/object of both the argument and the latter. 
+8. Adverbs: 
+   - complement words, evoke locative or evaluative concepts. 
+   - modify non-noun
+   - modify adjectives. can take complement as well.  
+9. Grammar without Context Free Gramma
+   - Categorial grammar: POS has certain syntaxs to perform combinations.  
+   - Dependency grammar: words below depends on words above, no concept of phrase, non-head depends on heads. 
+   - feature structure grammars: generalize CFG. 
+10. Open class vs Closed class: 
+    - open class: part of speech with an opened set of members. 
+    - closed class: words with highly idiosyncratic grammatical functions. 
+11. Phrase Structural Grammar can be derived by statistics or manual derived -> proabilistic parsing. 
+    - If a sentence follows a set of grammar, it is part of the language represented by the grammar.  
+
+## Shallow parsing & named entities
+1. shallow/partial parsing: find constituents without parsing the whole sentence. Identify "short phrases". 
+2. Named entity: proper noun phrase & proper adjective phrase & phrase has statistical possibility of name phrase but with different internal structure. 
+3. proper noun (phrase): capitalized even in non-intial position, typically represnet a uique individual object. 
+4. noun chunk taging(BIO tag): tag the position of each word within a noun phrase. 
+   - How to predict the next tag: use previous tag, previous words/beginning of sentence, previous part of sentence, capitalization, last letter of last word, etc. 
+5. Machine learning: prediction with many features. 
+   - supervised: model is trained on manually annotated text.
+   - unsupervised: trained on un-annotated data. 
+   - can use different algos & different features. 
+   - naive bayes: assume all features are independent. easy & fast
+   - maximum entropy: combine features using weights. 
+
+
+## semantic role labeling
+1. sentence meaning: define by the set of sentence share the same meaning. 
+2. semantic roles: same name for argument of equal predicates. roles are relational, is a relaion between a predicate and an argument.
+3. fillers & gaps: filler, antecend of missing phrase, gap, canonical position. 
+4. selection restrictions: if predicate selects argument, it imposes some semantic restrictions on ARG.can improve parsing when ambiguity occurs. 
+5. prop bank: contains lexicon and annotation. 
+   - lexicon: each verb is associated with 1 or more rolesets.each roleset lists the core argument of the verb
+   - annotation:  points to annotated Penn TreeBank constituents. 
+6. noun argument labeling:
+   - support verb: a verb that shares one of its arguments with a noun.
+   - support chain: combine elements to link arguments long distance. consist of multiple argument sharing predicates. 
+7. Discourse relations: relationships between sentences in a propbank like framework.
+
+## info extraction
+1. entities: a list of coreferential noun phrases. 
+2. ACE relations: triggers are grammatical constructions. usually two arguments
+3. ACE events: triggers are words, can have different number of arguments. 
+4. relation entities: set of coreferential relation metions. physical, part-whole, persocial. do not need a predicate. 
+5. event entities: set of coreferential entity mentions, nonconflicting arguments and refer to the same predication. always has a predicate
+6. Time: 
+   - Timex: absolute time and relative time, duration.
+   - TimeML: temporal relations between two args. event and time / event 1 and event2. overlaps when penn discourse treebank relation. 
+     - TLink relation arguments: events are word anchoring something that has a time,  all verb arguments.times are temporal expression,document time, time. 
+7. aspectual verb classes: states, process, accomplishment( time period measures entire evnet duration), achievement( time measures end point), interaction, 
+
+
+## reference resolution
+1. coreference: antecedent  = anaphor
+2. anaphora: refer back to another phrase. 
+3. cataphora: refers forward to another phrase. 
+4. Models of NP Coreference:
+   - chains of coreference: coreferencing words form a chain. instances can be lines apart and can be across documents. best for fully spelled out names.
+   - mention and entities: phrases referring to the same entity. best for pronouns and dfinite common nouns. proximity can be a factor. 
+5. coference of different types of nouns: 
+   - coreference between proper nouns: instance of the same name string tends to refer to the same thing. abbreviation & nicknames
+   - between common noun phrase and preceding noun phrases. difficult
+   - between prnouns and other NPs. 
+6. pronouns in english: 
+   - definite prnouns: typically refer to specific NPs. 
+   - indefinite pronouns: one
+7. binding theory constraints: an antecedent of personal pronouns cannot be too close to the pronoun. reflexive & reciprocal pronouns cannot be too far from the prnoun. 
+   - prnouns within a NP premodified by POSSESIVE phrases, the antecedent must be outsid of the NP.
+   - anecedent must be outside of the immediate tensed clause containing the pronoun.
+   - antecedent of a relfexive/reciprocal must be the closest subject or possessive. no possesive or subject in the structure tree between antecedent and pronoun. antecedent precedes and commands the phrase prnoun is in (sister in the tree)
+8. Pronoun resolution methodologies: Hobbs search. 
+9. scoreing coreferences in MUC-6. measure based on edit distance of the link to the answer key. 
+
+## Lemma & wordforms
+1. lemma: basic word form, wordforms: how a word actually occurs. one wordform can correspond to multiple lemmas. 
+2. wordnet: sense is defined by a synset, the set of words that share that meaning. extensional and hierarchical, can have cycles.  distance in the graph does not represent the distance in meaning. 
+3. word sense disambiguity: 
+   - word embedding: rows represent words, columns represent co-occuring words. related words have similar embeddings calcuate pointwise mutual information. 
+   - word embeddiing wit TFIDF: not used to differentiate among types of similarities. 
+
+
+## Feature Structures
+1. data structure for representing complext objects. 
+2. typed feature structures:
+   - limit what are the possible features that can be included. 
+   - every feature has a type. 
+   - NIL is the most general feathur structure. possible value for all features.
+   - subsumption property is transitive. 
+   - unification: combine two general feature structures to create a more concrete feature structure. commutiative, associative.
+3. For parsing, we look up all its feature structure entries instead of possible POS.
+
 
 
 
